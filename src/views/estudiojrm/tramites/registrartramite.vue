@@ -4,8 +4,9 @@ import { ref, onMounted, onBeforeMount } from 'vue';
 import ProductService from '@/service/ProductService';
 import { useToast } from 'primevue/usetoast';
 import { useLayout } from '@/layout/composables/layout';
+import { useRouter } from 'vue-router';
 const toast = useToast();
-
+const router = useRouter();
 const tramites = ref(null);
 
 const filters = ref({});
@@ -74,6 +75,10 @@ const initFilters = () => {
     };
 };
 
+const volver=()=>{
+  router.back()
+}
+
 </script>
 
 <template>
@@ -115,18 +120,8 @@ const initFilters = () => {
                             optionLabel="label"
                             />
                         </div>
-                                 
-                    </div>
-                    <br>
-                    <div class="p-fluid formgrid grid" >
-                      <div class="field col-12 md:col-12">
-                        <label for="address">Hechos ocurridos</label>
-                        <Textarea id="address" rows="2" />
-                      </div>
-                    </div>                    
-                    <div class="p-fluid formgrid grid">
                         <div class="field col-12 md:col-4">
-                          <label for="abogados">Tipo de tramite</label>
+                          <label for="abogados">Juzgado</label>
                           <Dropdown 
                             id="abogados"
                             v-model="opcionseleccionada1" 
@@ -134,8 +129,19 @@ const initFilters = () => {
                             filter placeholder="Seleccione un país"
                             optionLabel="label"
                             />
-                        </div> 
-                    </div>                 
+                        </div>
+                                 
+                    </div>
+
+                    <br>
+
+                    <div class="p-fluid formgrid grid" >
+                      <div class="field col-12 md:col-12">
+                        <label for="address">Hechos ocurridos</label>
+                        <Textarea id="address" rows="2" />
+                      </div>
+                    </div>  
+
                 </form>
               </div>
             </template>
@@ -147,8 +153,41 @@ const initFilters = () => {
                 <h3 class="text-left">Detalles Especificos</h3> 
                 <form class="">
                     <div class="p-fluid formgrid grid">
-                
-                    </div>
+                        <div class="field col-12 md:col-6">
+                          <label for="abogados">Tipo de tramite</label>
+                          <Dropdown 
+                            id="abogados"
+                            v-model="opcionseleccionada1" 
+                            :options="countries" 
+                            filter placeholder="Seleccione un país"
+                            optionLabel="label"
+                            />
+                        </div>
+                        <div class="field col-12 md:col-6">
+                            <label for="quantity">Presupuesto Inicial</label>
+                            <InputNumber id="quantity"    :required="true" integeronly />
+                            <small class="p-invalid" v-if="submitted && !product.celular">Debe de ingresar el número de telefono de la persona.</small>
+                        </div>
+                        
+                        <div class="field col-12 md:col-6">
+                            <label for="quantity">Declaracion del Cliente</label>
+                            <Textarea id="address" rows="4" />
+                            <small class="p-invalid" v-if="submitted && !product.celular">Debe de ingresar el número de telefono de la persona.</small>
+                        </div>
+                        <div class="field col-12 md:col-6">
+                            <label for="quantity">Declaracion del Demandado (Opcional)</label>
+                            <Textarea id="address" rows="4" />
+                            <small class="p-invalid" v-if="submitted && !product.celular">Debe de ingresar el número de telefono de la persona.</small>
+                        </div>
+
+                        <div class="field col-12 md:col-4">
+                          <Button label="Cancelar" class="p-button-secondary col-12   md:col-4 p-3" @click="volver" /> 
+                        </div>
+                        <div class="field col-12 md:col-4">
+                          <Button label="Guardar" class="p-button-primary col-12  md:col-4 p-3" /> 
+                        </div>                       
+
+                    </div>       
                 </form>
               </div>              
             </template>             
