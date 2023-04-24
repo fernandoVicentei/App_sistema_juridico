@@ -163,9 +163,16 @@ const volver=()=>{
                             optionLabel="label"
                             />
                         </div>
+                        <div class="field col-12 md:col-6"></div>
+
                         <div class="field col-12 md:col-6">
                             <label for="quantity">Presupuesto Inicial</label>
-                            <InputNumber id="quantity"    :required="true" integeronly />
+                            <InputNumber id="quantity"    :required="true" integeronly  />
+                            <small class="p-invalid" v-if="submitted && !product.celular">Debe de ingresar el número de telefono de la persona.</small>
+                        </div>
+                        <div class="field col-12 md:col-6">
+                            <label for="quantity">Descripcion del presupuesto (Opcional)</label>
+                            <InputText id="asunto_presupuesto"     />                             
                             <small class="p-invalid" v-if="submitted && !product.celular">Debe de ingresar el número de telefono de la persona.</small>
                         </div>
                         
@@ -179,18 +186,68 @@ const volver=()=>{
                             <Textarea id="address" rows="4" />
                             <small class="p-invalid" v-if="submitted && !product.celular">Debe de ingresar el número de telefono de la persona.</small>
                         </div>
-
-                        <div class="field col-12 md:col-4">
-                          <Button label="Cancelar" class="p-button-secondary col-12   md:col-4 p-3" @click="volver" /> 
-                        </div>
-                        <div class="field col-12 md:col-4">
-                          <Button label="Guardar" class="p-button-primary col-12  md:col-4 p-3" /> 
-                        </div>                       
+                                           
 
                     </div>       
                 </form>
               </div>              
             </template>             
+          </Toolbar>
+
+          <Toolbar class="mb-4">
+            <template v-slot:start>
+              <div class="my-2">
+                <h3 class="text-left">Pretensiones</h3> 
+                <form class="">
+                  <div class="p-fluid formgrid grid">
+
+                    <div class="field col-12 md:col-6">
+                          <label for="abogados">Tipo de Pretencion</label>
+                          <Dropdown 
+                            id="abogados"
+                            v-model="opcionseleccionada1" 
+                            :options="countries" 
+                            filter placeholder="Seleccione un país"
+                            optionLabel="label"
+                            />
+                    </div>
+                    <div class="field col-12 md:col-6">
+                        <label for="quantity">Otro (Opcional) </label>
+                        <InputText id="asunto_presupuesto"     />                             
+                        <small class="p-invalid" v-if="submitted && !product.celular">Debe de ingresar el número de telefono de la persona.</small>
+                    </div>
+
+                    <div class="field col-12 md:col-12">
+                        <label for="quantity">Valor medida </label>
+                        <InputText id="asunto_presupuesto"     />                             
+                        <small class="p-invalid" v-if="submitted && !product.celular">Debe de ingresar el número de telefono de la persona.</small>
+                    </div>
+
+
+                    <div class="field col-12 md:col-6">
+                            <label for="quantity">Pretencion del Cliente</label>
+                            <Textarea id="address" rows="4" />
+                            <small class="p-invalid" v-if="submitted && !product.celular">Debe de ingresar el número de telefono de la persona.</small>
+                        </div>
+                    <div class="field col-12 md:col-6">
+                        <label for="quantity">Pretencion del Demandado (Opcional)</label>
+                        <Textarea id="address" rows="4" />
+                        <small class="p-invalid" v-if="submitted && !product.celular">Debe de ingresar el número de telefono de la persona.</small>
+                    </div>
+
+
+                    <div class="field col-12 md:col-4">
+                        <Button label="Cancelar" class="p-button-secondary col-12   md:col-4 p-3" @click="volver" /> 
+                    </div>
+                    <div class="field col-12 md:col-4">
+                        <Button label="Guardar" class="p-button-primary col-12  md:col-4 p-3" /> 
+                    </div>   
+
+                  </div>              
+
+                </form>
+                </div>
+            </template>
           </Toolbar>
           
         </div>

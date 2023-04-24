@@ -19,6 +19,10 @@ const items = ref([
     }
 ]);
 
+
+
+
+
 const loading = ref([false, false, false]);
 
 const load = (index) => {
