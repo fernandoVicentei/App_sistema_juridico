@@ -75,7 +75,8 @@ const cargarAbogados=()=>{
     })
 }
 
-const saveProduct = () => {
+const  saveProduct = () => 
+{
     submitted.value = true;
     if ( product.value.nombre && product.value.nombre.trim() && product.value.carnet && product.value.celular &&
         (product.value.appaterno || product.value.apmaterno) && product.value.direccion && product.value.fechanac &&
@@ -179,6 +180,7 @@ const saveProduct = () => {
                 })                
             }            
     }
+
 };
 
 const editProduct = (editProduct) => {
@@ -422,21 +424,26 @@ const initFilters = () => {
                         <small class="p-invalid" v-if="submitted && !product.estadocivil">Debe seleccionar una de las opciones disponibles.</small>
                         </div> 
                     </div>        
+
                     <div class="field">
                         <label class="mb-3">Codigo en el sistema</label>                        
                         <InputText id="description" v-model="product.codigo" :class="{ 'p-invalid': submitted && !product.codigo }" :required="true" rows="3" cols="20" />              
                         <small class="p-invalid" v-if="submitted && !product.codigo">Ingrese un codigo de ingreso para  el sistema.</small>
                     </div> 
+
                     <div>
                         <ul>
                             <li   v-for="(error , i) in errorvalidacion" v-bind:key="i" class="text-red-500">{{ error }}</li>
                         </ul>
                     </div>
+
                     <template #footer>
                         <Button label="Cancel" icon="pi pi-times" class="p-button-text bg-info" @click="hideDialog" />
                         <Button label="Save" icon="pi pi-check" class="p-button-text" @click="saveProduct" />
                     </template>
+
                 </Dialog>
+
 
                 <Dialog v-model:visible="deleteProductDialog" :style="{ width: '450px' }" header="Confirm" :modal="true">
                     <div class="flex align-items-center justify-content-center">

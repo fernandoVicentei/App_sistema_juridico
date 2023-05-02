@@ -1,6 +1,6 @@
 <script setup>
 import { FilterMatchMode } from 'primevue/api';
-import { ref, onMounted, onBeforeMount } from 'vue';
+import { ref, onMounted, onBeforeMount ,  } from 'vue';
 import ProductService from '@/service/ProductService';
 import { useToast } from 'primevue/usetoast';
 import { useLayout } from '@/layout/composables/layout';
@@ -32,11 +32,11 @@ const pretenciondemandado = ref('')
 const hechosocurridos = ref('')
 const ruta =ref('http://localhost:80/apiEstudiojuridico/public/api/')
 
-
 const filters = ref({});
 
 onBeforeMount(() => {
     initFilters();
+     
 });
 
 onMounted(() => {
@@ -47,6 +47,9 @@ onMounted(() => {
    cargarTipoPretenciones()
 });
 
+const mostrarPrueba=()=>{
+  console.log( abogados.value[0] )
+}
 
 const cargarClientes=()=>{
     fetch(ruta.value+'clientes/retornarclientesbasico',{
@@ -224,75 +227,78 @@ const volver=()=>{
 }
 
 const tipotramiteseleccionado=(e)=>{
+  console.log(e)
   presupuesto.value = e.value.precioinicial
 }
 
 const guardar=()=>{
   submitted.value = true;  
   if ( fecha.value && abogado.value.id && cliente.value.id && juzgado.value.id && hechosocurridos.value &&
-      tipotramite.value.id && declaracioncliente.value && tipopretencion.value.id && valormedida.value &&
-      pretencioncliente.value ) 
-  {
-     let fecha_ =new Date(fecha.value);
-     let fecha_reg=fecha_.getFullYear()+'-'+(fecha_.getMonth()+1)+'-'+fecha_.getDate();
+          tipotramite.value.id && declaracioncliente.value && tipopretencion.value.id && valormedida.value &&
+          pretencioncliente.value ) 
+      {
+        let fecha_ =new Date(fecha.value);
+        let fecha_reg=fecha_.getFullYear()+'-'+(fecha_.getMonth()+1)+'-'+fecha_.getDate();
 
-     fetch( ruta.value+'tramite/agregar',{
-        method : 'POST', 
-        body:JSON.stringify({
-          fecha:fecha_reg,
-          estado :1,
-          hechosOcurridos:hechosocurridos.value,
-          abogado_id :abogado.value.id,
-          cliente_id : cliente.value.id ,
-          tipoproceso_id: tipotramite.value.id ,
-          valor_medida: valormedida.value ,
-          tipopretencion_id : tipopretencion.value.id ,
-          detallePretencionCliente: pretencioncliente.value   ,
-          declaracionCliente : declaracioncliente.value,
-          declaracionDemandado : declaraciondemandado.value,
-          monto: presupuesto.value ,
-          asunto : descripcionpresupuesto.value,
-          detallePretencionDemandado : pretenciondemandado.value
-        }),               
-        headers: {
-          "Content-Type": "application/json",                               
-        },
-     })
-     .then((response) => {
-        return response.json();
-    })
-    .then(res=>{    
-        console.log(res)
-        if(res.status == 200 ){
-          toast.add({ 
-             severity: 'success', 
-             summary: 'Registrado', 
-             detail: 'El registro del nuevo tramite se guardo correctamente.', 
-             life: 3000 });  
-        
-          setTimeout(function() {
-              router.back()
-          },3000);
-        
-        }else{
-            toast.add({
-             severity: 'warning',
-             summary: 'Error',
-             detail: 'Hubo un error al guardar el tramite', 
-             life: 3000
+        fetch( ruta.value+'tramite/agregar',{
+            method : 'POST', 
+            body:JSON.stringify({
+              fecha:fecha_reg,
+              estado :1,
+              hechosOcurridos:hechosocurridos.value,
+              abogado_id :abogado.value.id,
+              cliente_id : cliente.value.id ,
+              tipoproceso_id: tipotramite.value.id ,
+              valor_medida: valormedida.value ,
+              tipopretencion_id : tipopretencion.value.id ,
+              detallePretencionCliente: pretencioncliente.value   ,
+              declaracionCliente : declaracioncliente.value,
+              declaracionDemandado : declaraciondemandado.value,
+              monto: presupuesto.value ,
+              asunto : descripcionpresupuesto.value,
+              detallePretencionDemandado : pretenciondemandado.value
+            }),               
+            headers: {
+              "Content-Type": "application/json",                               
+            },
+        })
+        .then((response) => {
+            return response.json();
+        })
+        .then(res=>{    
+            console.log(res)
+            if(res.status == 200 ){
+              toast.add({ 
+                severity: 'success', 
+                summary: 'Registrado', 
+                detail: 'El registro del nuevo tramite se guardo correctamente.', 
+                life: 3000 });  
+            
+              setTimeout(function() {
+                  router.back()
+              },3000);
+            
+            }else{
+                toast.add({
+                severity: 'warning',
+                summary: 'Error',
+                detail: 'Hubo un error al guardar el tramite', 
+                life: 3000
+              });
+            }   
+        })
+        .catch((e)=>{
+          toast.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: 'Problemas al conectarse al servidor. Inntentelo nuevamente', 
+                life: 3000
           });
-        }   
-    })
-    .catch((e)=>{
-      toast.add({
-             severity: 'error',
-             summary: 'Error',
-             detail: 'Problemas al conectarse al servidor. Inntentelo nuevamente', 
-             life: 3000
-      });
 
-    })
-  }
+        })
+      } 
+
+
 }
 
 </script>
@@ -306,7 +312,7 @@ const guardar=()=>{
           <Toolbar class="mb-4">
             <template v-slot:start>
               <div class="my-2">
-                <h3 class="text-left">Registrar Tramite</h3> 
+                <h3 class="text-left">Editar Tramite</h3> 
                
                     <div class="p-fluid formgrid grid">
 
@@ -324,8 +330,8 @@ const guardar=()=>{
                             v-model="abogado" 
                             :options="abogados"                            
                             filter placeholder="Seleccione una opcion"
-                            optionLabel="nombre_completo"
-                            />
+                            optionLabel="nombre_completo"                             
+                          />
                         </div> 
 
                         <div class="field col-12 md:col-4">
@@ -337,9 +343,9 @@ const guardar=()=>{
                             filter placeholder="Seleccione una opcion"
                             optionLabel="nombre_completo"
                             :class="{ 'p-invalid': submitted && !cliente }" 
-                            :required="true"
-                            />
-                            <small class="p-invalid" v-if="submitted && !cliente">Debe seleccionar un cliente </small>
+                            :required="true"                            
+                          />
+                          <small class="p-invalid" v-if="submitted && !cliente">Debe seleccionar un cliente </small>
                         </div>
 
                         <div class="field col-12 md:col-4">
@@ -351,8 +357,8 @@ const guardar=()=>{
                             filter placeholder="Seleccione una opcion"
                             optionLabel="nombre"
                             :class="{ 'p-invalid': submitted && !juzgado }" 
-                            />
-                            <small class="p-invalid" v-if="submitted && !juzgado">Debe seleccionar una opcion </small>
+                          />
+                          <small class="p-invalid" v-if="submitted && !juzgado">Debe seleccionar una opcion </small>
                         </div>
                                  
                     </div>
@@ -381,7 +387,7 @@ const guardar=()=>{
                     <div class="p-fluid formgrid grid">
 
                         <div class="field col-12 md:col-6">
-                          <label for="tipotramite">Tipo de tramite</label>
+                          <label for="tipotramite">Tipo de tramite</label> 
                           <Dropdown 
                             id="tipotramite"
                             v-model="tipotramite" 
@@ -390,8 +396,8 @@ const guardar=()=>{
                             optionLabel="proceso"
                             @change="tipotramiteseleccionado"
                             :class="{ 'p-invalid': submitted && !tipotramite }" 
-                            />
-                            <small class="p-invalid" v-if="submitted && !tipotramite">Debe seleccionar el tipo de tramite al que corresponde el registro </small>
+                          />
+                          <small class="p-invalid" v-if="submitted && !tipotramite">Debe seleccionar el tipo de tramite al que corresponde el registro </small>
                         </div>
 
                         <div class="field col-12 md:col-6"></div>

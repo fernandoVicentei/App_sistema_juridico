@@ -65,7 +65,9 @@ const initFilters = () => {
     };
 };
 
-
+const editarTramite=(e)=>{
+    router.push('/estudio/tramites/editar_tramites');
+}
 
 
 </script>
@@ -156,7 +158,7 @@ const initFilters = () => {
                     
                     <Column headerStyle="min-width:10rem;">
                         <template #body="slotProps">
-                            <Button icon="pi pi-pencil" class="p-button-rounded p-button-warning mr-2" @click="editProduct(slotProps.data)" />
+                            <Button icon="pi pi-pencil" class="p-button-rounded p-button-warning mr-2" @click="editarTramite(slotProps.data)" />
                             <Button icon="pi pi-trash" class="p-button-rounded p-button-danger mt-2" @click="confirmDeleteProduct(slotProps.data)" />
                         </template>
                     </Column>

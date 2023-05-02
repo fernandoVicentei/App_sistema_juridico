@@ -37,6 +37,11 @@ const router = createRouter({
                     path: '/estudio/tramites/registrar_tramites',
                     name: 'registrar_tramites',
                     component: () => import('@/views/estudiojrm/tramites/registrartramite.vue')
+                },  
+                {
+                    path: '/estudio/tramites/editar_tramites',
+                    name: 'editar_tramites',
+                    component: () => import('@/views/estudiojrm/tramites/editartramite.vue')
                 },       
                 {
                     path: '/uikit/invalidstate',
