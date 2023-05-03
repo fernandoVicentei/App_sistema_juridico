@@ -9,8 +9,10 @@ const toast = useToast();
 const router = useRouter();
 
 const tramites = ref(null);
+const ruta = ref('http://localhost:80/apiEstudiojuridico/public/api/')
 
 const filters = ref({});
+const tramite = ref(null)
 
 onBeforeMount(() => {
     initFilters();
@@ -21,7 +23,7 @@ onMounted(() => {
 });
 
 const cargarTramites=()=>{
-    fetch('http://localhost:80/apiEstudiojuridico/public/api/tramite/listar',{
+    fetch( ruta.value+ 'tramite/listar',{
         method:'POST',                
         headers: {
         "Content-Type": "application/json",                               
@@ -54,6 +56,7 @@ const cargarTramites=()=>{
 }
 
 const openNew = () => {
+
   router.push('/estudio/tramites/registrar_tramites');
   //router.back()
   //this.$router.push('/estudio/tramites/registrar_tramites')
@@ -66,7 +69,48 @@ const initFilters = () => {
 };
 
 const editarTramite=(e)=>{
-    router.push('/estudio/tramites/editar_tramites');
+
+    ///tramite/buscar
+    let id = e.id
+    fetch( ruta.value+ 'tramite/buscar',{
+        method:'POST',                
+        body:JSON.stringify({
+            idTramite:id
+        }),
+        headers: {
+        "Content-Type": "application/json",                               
+        },
+    })
+    .then((response) => {
+        return response.json();
+    })
+    .then(res=>{
+        if(res.status == 200){
+           tramite.value = res.tramite
+          
+        }else{
+            toast.add({
+             severity: 'warning',
+             summary: 'Error',
+             detail: 'Problemas al obtener los datos.', 
+             life: 3000
+        });
+        }        
+    })
+    .catch((e)=>{
+        toast.add({
+             severity: 'error',
+             summary: 'Error',
+             detail: 'Problemas con obtener la informacion. Inntentelo nuevamente', 
+             life: 3000
+        });
+    })
+    .finally((e)=>{
+       // router.push({ path: '/estudio/tramites/editar_tramites', params: { tramite } });
+        router.push({ path: '/estudio/tramites/editar_tramites', query: { tramite: JSON.stringify(tramite.value) } });
+    })
+     
+    
 }
 
 

@@ -1,6 +1,6 @@
 <script setup>
 import { FilterMatchMode } from 'primevue/api';
-import { ref, onMounted, onBeforeMount ,  } from 'vue';
+import { ref, onMounted, onBeforeMount , nextTick  } from 'vue';
 import ProductService from '@/service/ProductService';
 import { useToast } from 'primevue/usetoast';
 import { useLayout } from '@/layout/composables/layout';
@@ -30,28 +30,31 @@ const valormedida = ref('')
 const pretencioncliente = ref('')
 const pretenciondemandado = ref('')
 const hechosocurridos = ref('')
+const idproceso = ref(null)
+const idtipopretencion = ref(null)
 const ruta =ref('http://localhost:80/apiEstudiojuridico/public/api/')
 
 const filters = ref({});
 
 onBeforeMount(() => {
     initFilters();
-     
 });
 
 onMounted(() => {
-   cargarClientes()
-   cargarAbogados()
-   cargarJuzgado()
-   cargarTipoTramites()
-   cargarTipoPretenciones()
+   let tramiteE = JSON.parse( router.currentRoute.value.query.tramite );
+   let fechaFormateada = new Date(tramiteE.fecha).toISOString().slice(0, 10);
+   hechosocurridos.value = tramiteE.hechosOcurridos
+   fecha.value = fechaFormateada
+   cargarClientes( tramiteE.cliente_id )
+   cargarAbogados( tramiteE.abogado_id )
+   cargarJuzgado( tramiteE.juzgado_id )
+   cargarPretencion( tramiteE.id )
+   cargarTipoTramites( tramiteE.tipoproceso_id )
+   cargarTipoPretenciones( tramiteE.tipopretencion_id )
+   
 });
 
-const mostrarPrueba=()=>{
-  console.log( abogados.value[0] )
-}
-
-const cargarClientes=()=>{
+const cargarClientes=(idCliente)=>{
     fetch(ruta.value+'clientes/retornarclientesbasico',{
         method:'POST',                
         headers: {
@@ -64,6 +67,8 @@ const cargarClientes=()=>{
     .then(res=>{
     
         if(res.status == 200 ){
+             let clienteT= res.clientes.find(objeto => objeto.id === idCliente)
+             cliente.value = clienteT
              clientes.value = res.clientes
         }else{
             toast.add({
@@ -85,7 +90,7 @@ const cargarClientes=()=>{
     
 }
 
-const cargarAbogados=()=>{
+const cargarAbogados=(idAbogado)=>{
     fetch(ruta.value+'abogados/retornarabogadosbasico',{
         method:'POST',                
         headers: {
@@ -97,6 +102,8 @@ const cargarAbogados=()=>{
     })
     .then(res=>{        
         if(res.status == 200 ){
+             let abogadoT= res.abogados.find(objeto => objeto.id === idAbogado )
+             abogado.value = abogadoT
              abogados.value = res.abogados
         }else{
             toast.add({
@@ -118,7 +125,7 @@ const cargarAbogados=()=>{
     
 }
 
-const cargarJuzgado=()=>{
+const cargarJuzgado=(idJuzgado)=>{
     fetch(ruta.value+'juzgado/retornarjuzgadobasico',{
         method:'POST',                
         headers: {
@@ -130,6 +137,8 @@ const cargarJuzgado=()=>{
     })
     .then(res=>{        
         if(res.status == 200 ){
+             let juzgadoT= res.juzgados.find(objeto => objeto.id === idJuzgado )
+             juzgado.value = juzgadoT
              juzgados.value = res.juzgados
         }else{
             toast.add({
@@ -151,7 +160,7 @@ const cargarJuzgado=()=>{
     
 }
 
-const cargarTipoTramites=()=>{// tipotramites/retornartipotramite
+const cargarTipoTramites=(idTipoTramite)=>{// tipotramites/retornartipotramite
     fetch(ruta.value+'tipotramites/retornartipotramite',{
         method:'POST',                
         headers: {
@@ -163,6 +172,8 @@ const cargarTipoTramites=()=>{// tipotramites/retornartipotramite
     })
     .then(res=>{        
         if(res.status == 200 ){
+             let ttramitesT= res.tipotramites.find(objeto => objeto.id === idTipoTramite )
+             tipotramite.value = ttramitesT   
              tipotramites.value = res.tipotramites
         }else{
             toast.add({
@@ -184,7 +195,8 @@ const cargarTipoTramites=()=>{// tipotramites/retornartipotramite
     
 }
 
-const cargarTipoPretenciones=()=>{// 
+const cargarTipoPretenciones=(  idtipopretencion )=>{// 
+    console.log( idtipopretencion )
     fetch(ruta.value+'pretenciones/retornartipopretenciones',{
         method:'POST',                
         headers: {
@@ -196,7 +208,47 @@ const cargarTipoPretenciones=()=>{//
     })
     .then(res=>{        
         if(res.status == 200 ){
+             let  ttpretencion = res.pretenciones.find(objeto => objeto.id === idtipopretencion )
+             tipopretencion.value  = ttpretencion
              tipopretenciones.value = res.pretenciones
+        }else{
+            toast.add({
+             severity: 'warning',
+             summary: 'Error',
+             detail: 'Problemas al obtener los datos.', 
+             life: 3000
+          });
+        }   
+    })
+    .catch((e)=>{
+        toast.add({
+             severity: 'error',
+             summary: 'Error',
+             detail: 'Problemas con obtener la informacion. Inntentelo nuevamente', 
+             life: 3000
+        });
+    })
+}
+
+const cargarPretencion=( idTramite )=>{
+  fetch(ruta.value+'pretencion/buscar',{
+        method:'POST',        
+        body:JSON.stringify({
+          idTramite : idTramite
+        })       , 
+        headers: {
+        "Content-Type": "application/json",                               
+        },
+    })
+    .then((response) => {
+        return response.json();
+    })
+    .then(res=>{        
+        if(res.status == 200 ){
+            valormedida.value = res.valorMedida;
+            pretencioncliente.value = res.detallePretencionCliente;
+            pretenciondemandado.value = res.detallePretencionDemandado;
+            
         }else{
             toast.add({
              severity: 'warning',
@@ -411,7 +463,7 @@ const guardar=()=>{
 
                         <div class="field col-12 md:col-6">
                             <label for="quantity">Descripcion del presupuesto (Opcional)</label>
-                            <InputText id="asunto_presupuesto"  v-model="descripcionpresupuesto"    />                                                         
+                            <InputText id="asunto_presupuesto"  v-model="descripcionpresupuesto"  integeronly readonly   />                                                         
                         </div>
                         
                         <div class="field col-12 md:col-6">
@@ -454,7 +506,7 @@ const guardar=()=>{
 
                     <div class="field col-12 md:col-6">
                         <label for="quantity">Otro (Opcional) </label>
-                        <InputText  v-model="pretencion_otro"     />                                                     
+                        <InputText  v-model="pretencion_otro"  integeronly readonly    />                                                     
                     </div>
 
                     <div class="field col-12 md:col-12">
